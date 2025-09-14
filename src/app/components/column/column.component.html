@@ -1,0 +1,28 @@
+<div class="column">
+  <div class="column-header">
+    <span class="column-title">{{ column.title }}</span>
+    <span class="column-counter">
+      {{ column.tasks?.length ?? 0 }}
+      <span *ngIf="column.wipLimit">/ {{ column.wipLimit }}</span>
+    </span>
+    <button class="add-task-btn" (click)="onAddTask()" [disabled]="isAtWipLimit">+</button>
+  </div>
+  <div
+    cdkDropList
+    [cdkDropListData]="column.tasks"
+    class="task-dropzone"
+    [ngClass]="{
+      'at-wip-limit': isAtWipLimit,
+      'near-wip-limit': isNearWipLimit
+    }"
+    (cdkDropListDropped)="onDrop($event)"
+  >
+    @if (column.tasks?.length > 0) {
+      <ng-content></ng-content>
+    } @else {
+      <div class="empty-state">
+        <span>No tasks</span>
+      </div>
+    }
+  </div>
+</div>

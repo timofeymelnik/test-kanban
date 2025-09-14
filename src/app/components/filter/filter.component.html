@@ -1,0 +1,20 @@
+<form [formGroup]="form" class="filter-form">
+  <input formControlName="title" type="text" placeholder="Search by title" />
+  <input formControlName="tags" type="text" placeholder="Search by tags" />
+
+  <select formControlName="assignee">
+    <option value="">All Assignees</option>
+    @for (assignee of assignees; track assignee) {
+      <option [value]="assignee">{{ assignee }}</option>
+    }
+  </select>
+
+  <select formControlName="priority">
+    <option value="">All Priorities</option>
+    @for (priority of priorities; track priority) {
+      <option [value]="priority">{{ priority }}</option>
+    }
+  </select>
+
+  <button type="button" (click)="clearFilters()">Clear Filters</button>
+</form>

@@ -1,0 +1,72 @@
+{
+  "columns": [
+    {
+      "id": "backlog",
+      "title": "Backlog",
+      "wipLimit": 10
+    },
+    {
+      "id": "inprogress",
+      "title": "In Progress",
+      "wipLimit": 3
+    },
+    {
+      "id": "review",
+      "title": "Review",
+      "wipLimit": 5
+    },
+    {
+      "id": "done",
+      "title": "Done",
+      "wipLimit": 999
+    }
+  ],
+  "tasks": [
+    {
+      "id": "t1",
+      "title": "Auth flow skeleton",
+      "description": "OAuth screen + route guard",
+      "assignee": "Alice",
+      "priority": "P1",
+      "tags": [
+        "auth",
+        "routing"
+      ],
+      "columnId": "backlog"
+    },
+    {
+      "id": "t2",
+      "title": "Board layout",
+      "description": "Columns, responsive grid",
+      "assignee": "Bob",
+      "priority": "P2",
+      "tags": [
+        "ui"
+      ],
+      "columnId": "inprogress"
+    },
+    {
+      "id": "t3",
+      "title": "DnD spikes",
+      "description": "Try CDK vs HTML5",
+      "assignee": "Charlie",
+      "priority": "P1",
+      "tags": [
+        "dnd",
+        "cdk"
+      ],
+      "columnId": "review"
+    },
+    {
+      "id": "t4",
+      "title": "Persist state",
+      "description": "LocalStorage service",
+      "assignee": "Alice",
+      "priority": "P3",
+      "tags": [
+        "state"
+      ],
+      "columnId": "done"
+    }
+  ]
+}

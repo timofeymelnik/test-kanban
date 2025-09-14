@@ -1,0 +1,30 @@
+<div
+  class="task-card"
+  draggable="true"
+  (dragstart)="onDragStart()"
+  (dragend)="onDragEnd()"
+  [ngStyle]="{ borderColor: priorityColor }"
+  [class.dragging]="isDragging()"
+>
+  <div class="task-header">
+    <span class="task-title">{{ task.title }}</span>
+    <span class="task-priority" [ngStyle]="{ color: priorityColor }">{{ task.priority }}</span>
+  </div>
+  <div class="task-details">
+    <div><strong>ID:</strong> {{ task.id }}</div>
+    <div><strong>Assignee:</strong> {{ task.assignee || 'Unassigned' }}</div>
+    <div><strong>Description:</strong> {{ task.description || 'No description' }}</div>
+    
+    @if (task.tags && task.tags.length > 0) {
+      <div class="task-tags">
+        @for (tag of task.tags; track tag) {
+          <span class="tag">{{ tag }}</span>
+        }
+      </div>
+    }
+  </div>
+  <div class="task-actions">
+    <button (click)="editTask()">Edit</button>
+    <button (click)="deleteTask()">Delete</button>
+  </div>
+</div>

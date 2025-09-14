@@ -1,0 +1,78 @@
+.column {
+  background: #f5f7fa;
+  border-radius: 8px;
+  padding: 16px;
+  margin: 0 8px;
+  min-width: 260px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 2px 8px #e0e0e0;
+}
+
+.column-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.column-title {
+  font-weight: bold;
+  font-size: 1.1em;
+}
+
+.column-counter {
+  font-size: 0.95em;
+  margin-left: 8px;
+  color: #666;
+}
+
+.add-task-btn {
+  background: #4caf50;
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  font-size: 1.2em;
+  cursor: pointer;
+  margin-left: 8px;
+  transition: background 0.2s;
+}
+.add-task-btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.task-dropzone {
+  min-height: 60px;
+  padding: 8px;
+  border: 2px dashed #b0bec5;
+  border-radius: 6px;
+  background: #fff;
+  transition: border-color 0.2s;
+}
+
+.task-dropzone.at-wip-limit {
+  border-color: #e53935;
+  background: #fff5f5;
+}
+
+.task-dropzone.near-wip-limit {
+  border-color: #ffb300;
+  background: #fffbe5;
+}
+
+.empty-state {
+  text-align: center;
+  color: #aaa;
+  padding: 18px 0;
+  font-size: 0.98em;
+}
+
+@media (max-width: 600px) {
+  .column {
+    min-width: 90vw;
+    margin: 8px 0;
+  }
+}
