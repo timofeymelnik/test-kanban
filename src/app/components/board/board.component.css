@@ -141,6 +141,19 @@
   border-radius: 12px;
   font-size: 0.8rem;
 }
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
 .task-actions {
   opacity: 0;
   transition: opacity 0.2s;
