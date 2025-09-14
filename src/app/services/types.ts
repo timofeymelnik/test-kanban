@@ -12,6 +12,7 @@ export interface Task {
   priority: string;
   tags: string[];
   columnId: string;
+  position?: number; // Optional position field for explicit ordering
 }
 
 export interface Board {

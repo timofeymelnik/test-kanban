@@ -30,6 +30,10 @@ export class BoardComponent {
     [...new Set(this.dataService.tasks().flatMap(t => t.tags))]
   );
 
+  readonly columnIds = computed(() =>
+    this.dataService.columns().map(column => column.id)
+  );
+  
   constructor(public dataService: DataService) {}
 
   getColumnTasks(columnId: string) {
@@ -89,9 +93,23 @@ export class BoardComponent {
     this.closeModal();
   }
 
-  onDrop<T>(event: CdkDragDrop<T>) {
-    if (event.previousContainer.id === event.container.id) return;
-    this.dataService.moveTask(event.item.data, event.container.id);
+  onDrop(event: CdkDragDrop<any>) {
+    if (event.previousContainer.id === event.container.id) {
+      // Same column reordering
+      this.dataService.reorderTask(
+        event.item.data,
+        event.container.id,
+        event.previousIndex,
+        event.currentIndex
+      );
+    } else {
+      // Moving between columns
+      this.dataService.moveTask(
+        event.item.data,
+        event.container.id,
+        event.currentIndex
+      );
+    }
   }
 
 }

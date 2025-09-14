@@ -127,7 +127,20 @@
   border-radius: 4px;
   color: white;
 }
+.task-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 8px;
+}
 
+.tag {
+  background-color: #e0e0e0;
+  color: #333;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+}
 .task-actions {
   opacity: 0;
   transition: opacity 0.2s;

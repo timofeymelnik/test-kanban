@@ -1,52 +1,36 @@
-<form [formGroup]="form" (ngSubmit)="onSave()" class="edit-form">
-  <h2>{{ mode === 'create' ? 'Create Task' : 'Edit Task' }}</h2>
-
-  <div class="form-field">
-    <label for="title">Title *</label>
-    <input
-      #titleInput
-      id="title"
-      type="text"
-      formControlName="title"
-      placeholder="Enter task title"
-    >
-    <div class="error-message" *ngIf="titleError">
-      {{ titleError }}
-    </div>
-  </div>
 <div class="modal-container">
   <div class="modal-header">
     <h2>{{ mode === 'create' ? 'Create New Task' : 'Edit Task' }}</h2>
   </div>
-  
+
   <form [formGroup]="form" (ngSubmit)="onSave()" class="edit-form">
     <div class="form-group">
       <label for="title">Title *</label>
-      <input 
+      <input
         #titleInput
-        type="text" 
-        id="title" 
-        formControlName="title" 
+        type="text"
+        id="title"
+        formControlName="title"
         placeholder="Task title"
       />
       @if (titleError) {
         <div class="error-message">{{ titleError }}</div>
       }
     </div>
-    
+
     <div class="form-group">
       <label for="description">Description</label>
-      <textarea 
-        id="description" 
-        formControlName="description" 
-        placeholder="Task description" 
+      <textarea
+        id="description"
+        formControlName="description"
+        placeholder="Task description"
         rows="3"
       ></textarea>
       @if (descriptionError) {
         <div class="error-message">{{ descriptionError }}</div>
       }
     </div>
-    
+
     <div class="form-group">
       <label for="priority">Priority</label>
       <select id="priority" formControlName="priority">
@@ -55,17 +39,42 @@
         }
       </select>
     </div>
-    
+
     <div class="form-group">
       <label for="assignee">Assignee</label>
-      <input 
-        type="text" 
-        id="assignee" 
-        formControlName="assignee" 
+      <input
+        type="text"
+        id="assignee"
+        formControlName="assignee"
         placeholder="Task assignee"
       />
     </div>
-    
+
+    <div class="form-group">
+      <label>Tags</label>
+      <div class="chip-list-container">
+        <mat-chip-grid #chipList aria-label="Task tags">
+          @for (tag of tags(); track tag) {
+            <mat-chip-row (removed)="removeTag(tag)">
+              {{tag}}
+              <button matChipRemove>
+                <mat-icon>cancel</mat-icon>
+              </button>
+            </mat-chip-row>
+          }
+          <input
+            placeholder="New tag..."
+            #tagInput
+            [formControl]="tagControl"
+            [matChipInputFor]="chipList"
+            [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+            (matChipInputTokenEnd)="addTag($event)"
+          />
+        </mat-chip-grid>
+      </div>
+      <div class="hint-text">Press Enter or comma to add tags</div>
+    </div>
+
     <div class="form-actions">
       <button type="button" class="btn-secondary" (click)="onCancel()">Cancel</button>
       <button type="submit" class="btn-primary" [disabled]="form.invalid">
@@ -74,39 +83,3 @@
     </div>
   </form>
 </div>
-  <div class="form-field">
-    <label for="description">Description</label>
-    <textarea
-      id="description"
-      formControlName="description"
-      placeholder="Enter task description"
-      rows="3"
-    ></textarea>
-  </div>
-
-  <div class="form-field">
-    <label for="priority">Priority</label>
-    <select id="priority" formControlName="priority">
-      <option value="P1">P1 - High</option>
-      <option value="P2">P2 - Medium</option>
-      <option value="P3">P3 - Low</option>
-    </select>
-  </div>
-
-  <div class="form-field">
-    <label for="assignee">Assignee</label>
-    <input
-      id="assignee"
-      type="text"
-      formControlName="assignee"
-      placeholder="Enter assignee name"
-    >
-  </div>
-
-  <div class="form-actions">
-    <button type="button" (click)="onCancel()">Cancel</button>
-    <button type="submit" [disabled]="form.invalid">
-      {{ mode === 'create' ? 'Create' : 'Save' }}
-    </button>
-  </div>
-</form>

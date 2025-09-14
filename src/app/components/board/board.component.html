@@ -51,6 +51,7 @@
              cdkDropList
              [id]="column.id"
              [cdkDropListData]="getColumnTasks(column.id)"
+             [cdkDropListConnectedTo]="columnIds()"
              (cdkDropListDropped)="onDrop($event)">
           @for (task of getColumnTasks(column.id); track task.id) {
             <div class="task-card"
@@ -70,11 +71,13 @@
               @if (task.assignee) {
                 <div class="task-assignee">Assigned to: {{ task.assignee }}</div>
               }
-              <div class="task-tags">
-                @for (tag of task.tags; track tag) {
-                  <span class="tag">{{ tag }}</span>
-                }
-              </div>
+              @if (task.tags && task.tags.length > 0) {
+                <div class="task-tags">
+                  @for (tag of task.tags; track tag) {
+                    <span class="tag">{{ tag }}</span>
+                  }
+                </div>
+              }
             </div>
           }
         </div>
@@ -92,90 +95,5 @@
       (cancel)="closeModal()"
     ></app-edit>
   </div>
-}
-<div class="board-container">
-  <!-- Filters -->
-  <div class="filters">
-    <select (change)="onAssigneeFilter($event)">
-      <option value="">All Assignees</option>
-      @for (assignee of uniqueAssignees(); track assignee) {
-        <option [value]="assignee">{{ assignee }}</option>
-      }
-    </select>
-
-    <select (change)="onPriorityFilter($event)">
-      <option value="">All Priorities</option>
-      @for (priority of uniquePriorities(); track priority) {
-        <option [value]="priority">{{ priority }}</option>
-      }
-    </select>
-
-    <select (change)="onTagFilter($event)">
-      <option value="">All Tags</option>
-      @for (tag of uniqueTags(); track tag) {
-        <option [value]="tag">{{ tag }}</option>
-      }
-    </select>
-
-    <button (click)="dataService.clearFilters()">Clear Filters</button>
-
-    <button class="add-task-btn" (click)="openCreateTask()">
-      Add Task
-    </button>
-  </div>
-
-  <!-- Board -->
-  <div class="board" cdkDropListGroup>
-    @for (column of dataService.columns(); track column.id) {
-      <div class="column">
-        <h3>
-          {{ column.title }}
-          ({{ getColumnTasks(column.id).length }}/{{ column.wipLimit }})
-        </h3>
-
-        <div class="task-list"
-             cdkDropList
-             [id]="column.id"
-             [cdkDropListData]="column.id"
-             (cdkDropListDropped)="onDrop($event)">
-
-          @for (task of getColumnTasks(column.id); track task.id) {
-            <div class="task"
-                 cdkDrag
-                 [cdkDragData]="task.id">
-              <div class="task-header">
-                <h4>{{ task.title }}</h4>
-                <button class="delete-btn"
-                        (click)="dataService.deleteTask(task.id)">
-                  ×
-                </button>
-                <button class="edit-btn"
-                        (click)="openEditTask(task)">
-                  Edit
-                </button>
-              </div>
-              <p>{{ task.description }}</p>
-              <div class="task-meta">
-                <span class="assignee">{{ task.assignee }}</span>
-                <span class="priority">{{ task.priority }}</span>
-                @for (tag of task.tags; track tag) {
-                  <span class="tag">{{ tag }}</span>
-                }
-              </div>
-            </div>
-          }
-        </div>
-      </div>
-    }
-  </div>
-</div>
-
-@if (showEditModal) {
-  <app-edit
-    [mode]="editMode"
-    [task]="selectedTask"
-    (save)="onTaskSave($event)"
-    (cancel)="closeModal()"
-  />
 }
 

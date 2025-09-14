@@ -7,16 +7,34 @@ import {
   OnInit,
   ElementRef,
   ViewChild,
-  AfterViewInit
+  AfterViewInit,
+  signal
 } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormControl } from '@angular/forms';
 import { Task } from '../../services/types';
 import { CommonModule } from '@angular/common';
+import { MatChipInputEvent } from '@angular/material/chips';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatButtonModule } from '@angular/material/button';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatIconModule } from '@angular/material/icon';
+import { COMMA, ENTER } from '@angular/cdk/keycodes';
 
 @Component({
   selector: 'app-edit',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule],
+  imports: [
+    ReactiveFormsModule, 
+    CommonModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatButtonModule,
+    MatChipsModule,
+    MatIconModule
+  ],
   templateUrl: './edit.component.html',
   styleUrl: './edit.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -30,18 +48,27 @@ export class EditComponent implements OnInit, AfterViewInit {
   @Output() cancel = new EventEmitter<void>();
 
   @ViewChild('titleInput') titleInput!: ElementRef<HTMLInputElement>;
+  @ViewChild('tagInput') tagInput!: ElementRef<HTMLInputElement>;
 
   form!: FormGroup;
+  
+  // Chip list settings
+  readonly separatorKeysCodes = [ENTER, COMMA] as const;
+  tags = signal<string[]>([]);
+  tagControl = new FormControl('');
 
   constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
+    // Initialize tags
+    this.tags.set(this.task?.tags || []);
+    
     this.form = this.fb.group({
       title: [this.task?.title ?? '', [Validators.required, Validators.minLength(3)]],
       description: [this.task?.description ?? ''],
       priority: [this.task?.priority ?? 'P3'],
       assignee: [this.task?.assignee ?? ''],
-      tags: [this.task?.tags ?? []]
+      // Tags will be managed separately using the chip list
     });
   }
 
@@ -51,6 +78,26 @@ export class EditComponent implements OnInit, AfterViewInit {
     }, 0);
   }
 
+  addTag(event: MatChipInputEvent): void {
+    const value = (event.value || '').trim();
+    
+    // Add tag
+    if (value) {
+      const currentTags = this.tags();
+      if (!currentTags.includes(value)) {
+        this.tags.update(tags => [...tags, value]);
+      }
+    }
+    
+    // Clear the input value
+    event.chipInput!.clear();
+    this.tagControl.setValue('');
+  }
+
+  removeTag(tag: string): void {
+    this.tags.update(tags => tags.filter(t => t !== tag));
+  }
+
   onSave(): void {
     if (this.form.valid) {
       const formValue = this.form.value;
@@ -58,7 +105,7 @@ export class EditComponent implements OnInit, AfterViewInit {
         ...this.task,
         ...formValue,
         id: this.task?.id ?? `task-${Date.now()}`,
-        tags: formValue.tags || [],
+        tags: this.tags(),
         columnId: this.task?.columnId || this.columnId || ''
       };
       

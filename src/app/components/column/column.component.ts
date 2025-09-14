@@ -1,10 +1,12 @@
 import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 import { Column } from '../../services/types';
-import { CdkDropList, CdkDragDrop } from '@angular/cdk/drag-drop';
+import { CdkDropList, CdkDragDrop, DragDropModule } from '@angular/cdk/drag-drop';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-column',
-  imports: [CdkDropList],
+  standalone: true,
+  imports: [CommonModule, DragDropModule],
   templateUrl: './column.component.html',
   styleUrl: './column.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush

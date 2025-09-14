@@ -101,15 +101,90 @@ export class DataService {
     this.filterState.set({});
   }
 
-  moveTask(taskId: string, targetColumnId: string): void {
+  moveTask(taskId: string, targetColumnId: string, targetIndex: number = -1): void {
     const columns = this.columns();
     const targetColumn = columns.find(col => col.id === targetColumnId);
-
+  
     if (!targetColumn) return;
-
+  
     const tasksInTargetColumn = this.tasksByColumn()[targetColumnId].length;
-    if (tasksInTargetColumn >= targetColumn.wipLimit) return;
-
-    this.updateTask(taskId, { columnId: targetColumnId });
+    if (targetColumn.wipLimit !== undefined && tasksInTargetColumn >= targetColumn.wipLimit) return;
+  
+    // First, remove the task from its current position
+    this.boardState.update(board => {
+      const taskIndex = board.tasks.findIndex(t => t.id === taskId);
+      if (taskIndex === -1) return board;
+  
+      const updatedTasks = [...board.tasks];
+      const [task] = updatedTasks.splice(taskIndex, 1);
+      
+      // If targetIndex is specified, insert at that position
+      // Otherwise, add to end of target column
+      const updatedTask = {
+        ...task,
+        columnId: targetColumnId
+      };
+      
+      if (targetIndex >= 0) {
+        // Find the proper position to insert the task
+        const targetColumnTasks = updatedTasks.filter(t => t.columnId === targetColumnId);
+        const totalTasks = updatedTasks.length;
+        
+        // Find where to insert in the main array
+        if (targetColumnTasks.length === 0) {
+          // No tasks in target column, just append
+          updatedTasks.push(updatedTask);
+        } else if (targetIndex >= targetColumnTasks.length) {
+          // Insert after the last task in the column
+          const lastTaskIndex = updatedTasks.findIndex(t => 
+            t.id === targetColumnTasks[targetColumnTasks.length - 1].id
+          );
+          updatedTasks.splice(lastTaskIndex + 1, 0, updatedTask);
+        } else {
+          // Insert at the correct position
+          const targetTask = targetColumnTasks[targetIndex];
+          const targetTaskIndex = updatedTasks.findIndex(t => t.id === targetTask.id);
+          updatedTasks.splice(targetTaskIndex, 0, updatedTask);
+        }
+      } else {
+        // Just append to the end
+        updatedTasks.push(updatedTask);
+      }
+      
+      return {
+        ...board,
+        tasks: updatedTasks
+      };
+    });
+    
+    this.syncStorage();
+  }
+  
+  reorderTask(taskId: string, columnId: string, previousIndex: number, currentIndex: number): void {
+    if (previousIndex === currentIndex) return;
+    
+    this.boardState.update(board => {
+      // Get all tasks in the column
+      const columnTasks = board.tasks
+        .filter(t => t.columnId === columnId)
+        .map(t => ({ ...t }));
+      
+      if (columnTasks.length <= 1) return board;
+      
+      // Reorder the tasks within the column
+      const [movedTask] = columnTasks.splice(previousIndex, 1);
+      columnTasks.splice(currentIndex, 0, movedTask);
+      
+      // Create a new tasks array with the updated order
+      const tasksNotInColumn = board.tasks.filter(t => t.columnId !== columnId);
+      const updatedTasks = [...tasksNotInColumn, ...columnTasks];
+      
+      return {
+        ...board,
+        tasks: updatedTasks
+      };
+    });
+    
+    this.syncStorage();
   }
 }
